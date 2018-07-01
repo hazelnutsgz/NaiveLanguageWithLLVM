@@ -12,6 +12,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fac0bbd8-01a8-4d17-9e0e-f63d8beebf98" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/a.out" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/a.out.dSYM/Contents/Info.plist" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/a.out.dSYM/Contents/Resources/DWARF/a.out" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
@@ -37,15 +40,8 @@
       <file leaf-file-name="main.cpp" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-9138">
-              <caret line="119" column="47" selection-start-line="119" selection-start-column="47" selection-end-line="119" selection-end-column="47" />
-              <folding>
-                <element signature="e#756#2119#0" />
-                <element signature="e#5131#5434#0" />
-                <element signature="e#5436#5621#0" />
-                <element signature="e#5622#5721#0" />
-                <element signature="e#5988#6284#0" />
-              </folding>
+            <state relative-caret-position="400">
+              <caret line="232" lean-forward="true" selection-start-line="232" selection-end-line="232" />
             </state>
           </provider>
         </entry>
@@ -71,7 +67,6 @@
       <find>HandleTopLevelExpression</find>
       <find>gettok</find>
       <find>ParseIdentifierExpr</find>
-      <find>ParseExpression</find>
       <find>CallExprAST</find>
       <find>Value</find>
       <find>NamedValues</find>
@@ -79,6 +74,9 @@
       <find>HandleDefinition</find>
       <find>ParseExtern</find>
       <find>ParsePrototype</find>
+      <find>TokPrec</find>
+      <find>getNextToken</find>
+      <find>ParseExpression</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -166,12 +164,12 @@
       <workItem from="1526910554244" duration="18506000" />
       <workItem from="1527668232592" duration="173000" />
       <workItem from="1530024052712" duration="2000" />
-      <workItem from="1530434666656" duration="7619000" />
+      <workItem from="1530434666656" duration="10640000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="26300000" />
+    <option name="totallyTimeSpent" value="29321000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="792" y="0" width="888" height="1050" extended-state="6" />
@@ -215,13 +213,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1224">
           <caret line="51" column="47" selection-start-line="51" selection-start-column="47" selection-end-line="51" selection-end-column="47" />
-          <folding>
-            <element signature="e#756#2119#0" />
-            <element signature="e#5131#5434#0" />
-            <element signature="e#5436#5621#0" />
-            <element signature="e#5622#5721#0" />
-            <element signature="e#5988#6284#0" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -297,15 +288,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/main.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-9138">
-          <caret line="119" column="47" selection-start-line="119" selection-start-column="47" selection-end-line="119" selection-end-column="47" />
-          <folding>
-            <element signature="e#756#2119#0" />
-            <element signature="e#5131#5434#0" />
-            <element signature="e#5436#5621#0" />
-            <element signature="e#5622#5721#0" />
-            <element signature="e#5988#6284#0" />
-          </folding>
+        <state relative-caret-position="400">
+          <caret line="232" lean-forward="true" selection-start-line="232" selection-end-line="232" />
         </state>
       </provider>
     </entry>
