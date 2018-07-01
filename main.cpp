@@ -1,4 +1,14 @@
+#include "llvm/ADT/APFloat.h"
 #include "llvm/ADT/STLExtras.h"
+#include "llvm/IR/BasicBlock.h"
+#include "llvm/IR/Constants.h"
+#include "llvm/IR/DerivedTypes.h"
+#include "llvm/IR/Function.h"
+#include "llvm/IR/IRBuilder.h"
+#include "llvm/IR/LLVMContext.h"
+#include "llvm/IR/Module.h"
+#include "llvm/IR/Type.h"
+#include "llvm/IR/Verifier.h"
 #include <algorithm>
 #include <cctype>
 #include <cstdio>
@@ -108,7 +118,6 @@ namespace {
 
     public:
         NumberExprAST(double Val) : Val(Val) {}
-        virtual Value* codegen() = 0;
         Value* codegen() {
             return ConstantFP::get(TheContext, APFloat(Val));
         }
@@ -208,6 +217,12 @@ namespace {
             std::vector<Type*> Doubles(Args.size(), Type::getDoubleTy(TheContext));
             FunctionType* FT = FunctionType::get(Type::getDoubleTy(TheContext), Doubles, false);
             Function* F = Function::create(FT, Function::ExternalLinkage, Name, TheModule);
+
+            unsigned Idx = 0;
+            for (auto &Arg : F->args())
+                Arg.setName(Args[Idx++]);
+
+            return F;
         }
     };
 
@@ -230,9 +245,28 @@ namespace {
             if (!TheFunction)
                 return nullptr;
 
-            if (!TheFunction->empty())
-                return (Function*)LogErrorV("Function cannot be redefined.");
-    };
+            BasicBlock *BB = BasicBlock::Create(TheContext, "entry", TheFunction);
+            Builder.SetInsertPoint(BB);
+
+            // Record the function arguments in the NamedValues map.
+            NamedValues.clear();
+            for (auto &Arg : TheFunction->args())
+                NamedValues[Arg.getName()] = &Arg;
+
+            if (Value *RetVal = Body->codegen()) {
+                // Finish off the function.
+                Builder.CreateRet(RetVal);
+
+                // Validate the generated code, checking for consistency.
+                verifyFunction(*TheFunction);
+
+                return TheFunction;
+
+                TheFunction->eraseFromParent();
+                return nullptr;
+            }
+
+        };
 
 } // end anonymous namespace
 
@@ -453,8 +487,12 @@ static std::unique_ptr<PrototypeAST> ParseExtern() {
 //===----------------------------------------------------------------------===//
 
 static void HandleDefinition() {
-    if (ParseDefinition()) {
-        fprintf(stderr, "Parsed a function definition.\n");
+    if (auto FnAST = ParseDefinition()) {
+        if (auto *FnIR = FnAST->codegen()) {
+            fprintf(stderr, "Read function definition:");
+            FnIR->print(errs());
+            fprintf(stderr, "\n");
+        }
     } else {
         // Skip token for error recovery.
         getNextToken();
@@ -462,8 +500,12 @@ static void HandleDefinition() {
 }
 
 static void HandleExtern() {
-    if (ParseExtern()) {
-        fprintf(stderr, "Parsed an extern\n");
+    if (auto ProtoAST = ParseExtern()) {
+        if (auto *FnIR = ProtoAST->codegen()) {
+            fprintf(stderr, "Read extern: ");
+            FnIR->print(errs());
+            fprintf(stderr, "\n");
+        }
     } else {
         // Skip token for error recovery.
         getNextToken();
@@ -472,8 +514,12 @@ static void HandleExtern() {
 
 static void HandleTopLevelExpression() {
     // Evaluate a top-level expression into an anonymous function.
-    if (ParseTopLevelExpr()) {
-        fprintf(stderr, "Parsed a top-level expr\n");
+    if (auto FnAST = ParseTopLevelExpr()) {
+        if (auto *FnIR = FnAST->codegen()) {
+            fprintf(stderr, "Read top-level expression:");
+            FnIR->print(errs());
+            fprintf(stderr, "\n");
+        }
     } else {
         // Skip token for error recovery.
         getNextToken();
@@ -519,8 +565,16 @@ int main() {
     fprintf(stderr, "ready> ");
     getNextToken();
 
+    getNextToken();
+
+    // Make the module, which holds all the code.
+    TheModule = llvm::make_unique<Module>("my cool jit", TheContext);
+
+
     // Run the main "interpreter loop" now.
     MainLoop();
 
+    // Print out all of the generated code.
+    TheModule->print(errs(), nullptr);
     return 0;
 }

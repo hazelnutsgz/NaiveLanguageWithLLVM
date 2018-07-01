@@ -37,8 +37,8 @@
       <file leaf-file-name="main.cpp" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="377">
-              <caret line="208" column="58" selection-start-line="208" selection-start-column="58" selection-end-line="208" selection-end-column="58" />
+            <state relative-caret-position="-9138">
+              <caret line="119" column="47" selection-start-line="119" selection-start-column="47" selection-end-line="119" selection-end-column="47" />
               <folding>
                 <element signature="e#756#2119#0" />
                 <element signature="e#5131#5434#0" />
@@ -66,8 +66,6 @@
       <find>ParseDefinition</find>
       <find>andleDefinition</find>
       <find>HandleExtern</find>
-      <find>ParseExtern</find>
-      <find>ParsePrototype</find>
       <find>FunctionAST</find>
       <find>ExprAST</find>
       <find>HandleTopLevelExpression</find>
@@ -77,6 +75,10 @@
       <find>CallExprAST</find>
       <find>Value</find>
       <find>NamedValues</find>
+      <find>Handle</find>
+      <find>HandleDefinition</find>
+      <find>ParseExtern</find>
+      <find>ParsePrototype</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -164,20 +166,20 @@
       <workItem from="1526910554244" duration="18506000" />
       <workItem from="1527668232592" duration="173000" />
       <workItem from="1530024052712" duration="2000" />
-      <workItem from="1530434666656" duration="6746000" />
+      <workItem from="1530434666656" duration="7619000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="25427000" />
+    <option name="totallyTimeSpent" value="26300000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="792" y="0" width="888" height="1050" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.074324325" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.074324325" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Messages" visible="true" weight="0.43186373" />
+      <window_info active="true" anchor="bottom" id="Messages" visible="true" weight="0.43186373" />
       <window_info anchor="bottom" id="CMake" order="7" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Run" order="2" />
@@ -295,8 +297,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/main.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="377">
-          <caret line="208" column="58" selection-start-line="208" selection-start-column="58" selection-end-line="208" selection-end-column="58" />
+        <state relative-caret-position="-9138">
+          <caret line="119" column="47" selection-start-line="119" selection-start-column="47" selection-end-line="119" selection-end-column="47" />
           <folding>
             <element signature="e#756#2119#0" />
             <element signature="e#5131#5434#0" />
