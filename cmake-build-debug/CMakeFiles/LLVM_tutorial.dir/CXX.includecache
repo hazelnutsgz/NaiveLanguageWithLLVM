@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/hashibami/Desktop/2018/编译原理/LLVM-tutorial/main.cpp
+algorithm
+-
+cctype
+-
+cstdio
+-
+cstdlib
+-
+map
+-
+memory
+-
+string
+-
+vector
+-
+
