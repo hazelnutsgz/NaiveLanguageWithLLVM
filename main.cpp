@@ -27,6 +27,16 @@ enum Token {
 static std::string IdentifierStr; // Filled in if tok_identifier
 static double NumVal;             // Filled in if tok_number
 
+static LLVMContext TheContext;
+static IRBuilder<> Builder(TheContext);
+static std::unique_ptr<Module> TheModule;
+static std::map<std::string, Value *> NamedValues;
+
+Value *LogErrorV(const char *Str) {
+    LogError(Str);
+    return nullptr;
+}
+
 /// gettok - Return the next token from standard input.
 static int gettok() {
     static int LastChar = ' ';
@@ -89,6 +99,7 @@ namespace {
     class ExprAST {
     public:
         virtual ~ExprAST() = default;
+        virtual Value *codegen() = 0;
     };
 
 /// NumberExprAST - Expression class for numeric literals like "1.0".
@@ -97,6 +108,11 @@ namespace {
 
     public:
         NumberExprAST(double Val) : Val(Val) {}
+        virtual Value* codegen() = 0;
+        Value* codegen() {
+            return ConstantFP::get(TheContext, APFloat(Val));
+        }
+
     };
 
 /// VariableExprAST - Expression class for referencing a variable, like "a".
@@ -105,6 +121,13 @@ namespace {
 
     public:
         VariableExprAST(const std::string &Name) : Name(Name) {}
+        Value* codegen() {
+            Value* V = NamedValues[Name];
+            if (!V)
+                LogErrorV("Unknown variable name");
+            return V;
+        }
+
     };
 
 /// BinaryExprAST - Expression class for a binary operator.
@@ -116,6 +139,29 @@ namespace {
         BinaryExprAST(char Op, std::unique_ptr<ExprAST> LHS,
                       std::unique_ptr<ExprAST> RHS)
                 : Op(Op), LHS(std::move(LHS)), RHS(std::move(RHS)) {}
+
+        Value* codegen() {
+            Value* L = LHS->codegen();
+            Value* R = RHS->codegen();
+            if (!L || !R)
+                return nullptr;
+
+            switch (Op) {
+                case '+':
+                    return Builder.CreateFAdd(L, R, "addtmp");
+                case '-':
+                    return Builder.CreateFSub(L, R, "subtmp");
+                case '*':
+                    return Builder.CreateFMul(L, R, "multmp");
+                case '<':
+                    L = Builder.CreateFCmpULT(L, R, "cmptmp");
+                    return Builder.CreateUIToFP(L, Type::getDoubleTy(TheContext),
+                                                "booltmp");
+                default:
+                    return LogErrorV("Invalid binary operator");
+
+            }
+        }
     };
 
 /// CallExprAST - Expression class for function calls.
@@ -127,6 +173,24 @@ namespace {
         CallExprAST(const std::string &Callee,
                     std::vector<std::unique_ptr<ExprAST>> Args)
                 : Callee(Callee), Args(std::move(Args)) {}
+        Value* codegen() {
+            Function* CalleeF = TheModule->getFunction(Callee);
+            if (!CalleeF)
+                return LogErrorV("Unknown function referenced");
+
+            // If argument mismatch error.
+            if (CalleeF->arg_size() != Args.size())
+                return LogErrorV("Incorrect # arguments passed");
+
+            std::vector<Value *> ArgsV;
+            for (unsigned i = 0, e = Args.size(); i != e; ++i) {
+                ArgsV.push_back(Args[i]->codegen());
+                if (!ArgsV.back())
+                    return nullptr;
+            }
+
+            return Builder.CreateCall(CalleeF, ArgsV, "calltmp");
+        }
     };
 
 /// PrototypeAST - This class represents the "prototype" for a function,
@@ -139,8 +203,12 @@ namespace {
     public:
         PrototypeAST(const std::string &Name, std::vector<std::string> Args)
                 : Name(Name), Args(std::move(Args)) {}
-
         const std::string &getName() const { return Name; }
+        Function* codegen() {
+            std::vector<Type*> Doubles(Args.size(), Type::getDoubleTy(TheContext));
+            FunctionType* FT = FunctionType::get(Type::getDoubleTy(TheContext), Doubles, false);
+            Function* F = Function::create(FT, Function::ExternalLinkage, Name, TheModule);
+        }
     };
 
 /// FunctionAST - This class represents a function definition itself.
@@ -152,6 +220,18 @@ namespace {
         FunctionAST(std::unique_ptr<PrototypeAST> Proto,
                     std::unique_ptr<ExprAST> Body)
                 : Proto(std::move(Proto)), Body(std::move(Body)) {}
+        Function *FunctionAST::codegen() {
+            // First, check for an existing function from a previous 'extern' declaration.
+            Function *TheFunction = TheModule->getFunction(Proto->getName());
+
+            if (!TheFunction)
+                TheFunction = Proto->codegen();
+
+            if (!TheFunction)
+                return nullptr;
+
+            if (!TheFunction->empty())
+                return (Function*)LogErrorV("Function cannot be redefined.");
     };
 
 } // end anonymous namespace
