@@ -1,3 +1,0 @@
-/Users/hashibami/Desktop/2018/编译原理/LLVM-tutorial/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/Users/hashibami/Desktop/2018/编译原理/LLVM-tutorial/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/hashibami/Desktop/2018/编译原理/LLVM-tutorial/cmake-build-debug/CMakeFiles/LLVM_tutorial.dir
